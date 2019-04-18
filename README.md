@@ -1,8 +1,10 @@
 # FreePlayer
 
+视频播放器，已知支持多种视频格式。本地文件支持iTunes导入或者HTTP网络导入。
+
 ### 本地文件列表
 
-![img](snapshot/file_list.jpeg)
+![img-w70](snapshot/file_list.jpeg)
 
 ### 文件预览
 
