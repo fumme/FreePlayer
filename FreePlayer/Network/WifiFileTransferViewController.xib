@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WifiFileTransferViewController" customModule="FreePlayer" customModuleProvider="target">
+            <connections>
+                <outlet property="ftpLb" destination="hfP-jd-Tq3" id="Lrb-GN-zc7"/>
+                <outlet property="httpLb" destination="nYK-wn-GXb" id="Nru-St-xt8"/>
+                <outlet property="tipTextView" destination="gca-Dk-ftd" id="1Ar-WT-Ju0"/>
+                <outlet property="view" destination="iN0-l3-epB" id="q8Q-SM-NfF"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wifi_transfer" translatesAutoresizingMaskIntoConstraints="NO" id="Tap-HJ-uAY">
+                    <rect key="frame" x="29" y="489" width="79" height="90"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="90" id="Z7P-ep-d1G"/>
+                        <constraint firstAttribute="width" constant="79" id="j9e-qa-9YQ"/>
+                    </constraints>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="WifiManageIphone" translatesAutoresizingMaskIntoConstraints="NO" id="Cu3-qT-I6S">
+                    <rect key="frame" x="67.5" y="90" width="240" height="100"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="100" id="w8L-7G-BKI"/>
+                        <constraint firstAttribute="width" constant="240" id="xbw-f4-zbU"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HTTP传输地址" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L8x-aJ-jqd">
+                    <rect key="frame" x="29" y="220" width="180" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="180" id="ZyO-d8-Ya5"/>
+                        <constraint firstAttribute="height" constant="21" id="jlY-5R-std"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FTP传输地址" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AQm-EE-KnJ">
+                    <rect key="frame" x="29" y="285" width="180" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="180" id="8Qg-WV-09o"/>
+                        <constraint firstAttribute="height" constant="21" id="GUC-PD-XoA"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nYK-wn-GXb" customClass="XYPasteLabel" customModule="FreePlayer" customModuleProvider="target">
+                    <rect key="frame" x="29" y="249" width="321" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="wQO-Y6-jcw"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gca-Dk-ftd">
+                    <rect key="frame" x="119" y="484" width="240" height="120"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="120" id="ekD-gy-XHU"/>
+                    </constraints>
+                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <fontDescription key="fontDescription" name=".PingFangSC-Regular" family=".PingFang SC" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hfP-jd-Tq3" customClass="XYPasteLabel" customModule="FreePlayer" customModuleProvider="target">
+                    <rect key="frame" x="29" y="314" width="321" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="X7B-Zc-5Vq"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="hfP-jd-Tq3" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="29" id="220-vh-RQ7"/>
+                <constraint firstItem="Tap-HJ-uAY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="29" id="5Yp-Fr-yRI"/>
+                <constraint firstItem="Cu3-qT-I6S" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="6k5-6s-42C"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="nYK-wn-GXb" secondAttribute="trailing" constant="25" id="Cey-0e-AtO"/>
+                <constraint firstItem="AQm-EE-KnJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="29" id="ITY-K5-lrY"/>
+                <constraint firstItem="Cu3-qT-I6S" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="70" id="LUn-jE-PZU"/>
+                <constraint firstItem="gca-Dk-ftd" firstAttribute="leading" secondItem="Tap-HJ-uAY" secondAttribute="trailing" constant="11" id="Mdr-iJ-65r"/>
+                <constraint firstItem="hfP-jd-Tq3" firstAttribute="top" secondItem="AQm-EE-KnJ" secondAttribute="bottom" constant="8" id="PQD-fh-1JT"/>
+                <constraint firstItem="L8x-aJ-jqd" firstAttribute="top" secondItem="Cu3-qT-I6S" secondAttribute="bottom" constant="30" id="SBs-XY-tsN"/>
+                <constraint firstItem="nYK-wn-GXb" firstAttribute="top" secondItem="L8x-aJ-jqd" secondAttribute="bottom" constant="8" id="cRX-tP-Chk"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="gca-Dk-ftd" secondAttribute="trailing" constant="16" id="cZi-fx-d3H"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="hfP-jd-Tq3" secondAttribute="trailing" constant="25" id="llk-aP-ukm"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Tap-HJ-uAY" secondAttribute="bottom" constant="88" id="nDx-Z9-XSh"/>
+                <constraint firstItem="AQm-EE-KnJ" firstAttribute="top" secondItem="nYK-wn-GXb" secondAttribute="bottom" constant="15" id="rZb-eK-UmI"/>
+                <constraint firstItem="gca-Dk-ftd" firstAttribute="centerY" secondItem="Tap-HJ-uAY" secondAttribute="centerY" constant="10" id="tKS-9o-rLg"/>
+                <constraint firstItem="nYK-wn-GXb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="29" id="uKY-Nj-NAK"/>
+                <constraint firstItem="L8x-aJ-jqd" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="29" id="xHl-Y8-Gkb"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="138.40000000000001" y="124.58770614692655"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="WifiManageIphone" width="332" height="149"/>
+        <image name="wifi_transfer" width="100" height="120"/>
+    </resources>
+</document>
