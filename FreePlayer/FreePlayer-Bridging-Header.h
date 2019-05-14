@@ -7,4 +7,4 @@
 #import "XMFTPServer.h"
 #import "AVPlayerItem+MCCacheSupport.h"
 //#import "IJKMediaFramework/IJKMediaPlayer.h"
-//#import "MobileVLCKit/MobileVLCKit.h"
+#import "MobileVLCKit/MobileVLCKit.h"

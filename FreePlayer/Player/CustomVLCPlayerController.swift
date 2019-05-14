@@ -14,7 +14,11 @@ class CustomVLCPlayerController: BaseViewController {
     
     private var index = -1
     
-    private let listPlayer = VLCMediaListPlayer()
+    private let listPlayer: VLCMediaListPlayer = {
+        let player = VLCMediaListPlayer()
+        player.repeatMode = .doNotRepeat
+        return player
+    }()
     
     private var files = [XYFile]()
     
@@ -35,7 +39,8 @@ class CustomVLCPlayerController: BaseViewController {
         let bar = VLCTopBar()
         bar.setTitle(url?.lastPathComponent, buttonState: false)
         bar.closeWindowAction = {[weak self] in
-            self?.dismiss(animated: true, completion: nil)
+            guard let strongSelf = self else { return }
+            strongSelf.dismiss(animated: true, completion: nil)
         }
         bar.showPadAction = {[weak self] onOff in
             guard let strongSelf = self else { return }
@@ -54,8 +59,8 @@ class CustomVLCPlayerController: BaseViewController {
         
         bar.showPlayListMenuAction = {[weak self] onOff in
             guard let strongSelf = self else { return }
-            strongSelf.playListMenu.show()
             strongSelf.playListMenu.currentItem = strongSelf.url?.lastPathComponent
+            strongSelf.playListMenu.show()
         }
         bar.isHidden = true
         return bar
@@ -149,15 +154,15 @@ class CustomVLCPlayerController: BaseViewController {
                     return VLCMedia(url: file.fileURL)
                 }
                 strongSelf.listPlayer.mediaList = VLCMediaList(array: medias)
+                strongSelf.vlcPlayer.drawable = strongSelf.videoView
+                strongSelf.vlcPlayer.delegate = self
+                let rate = UserDefaults.standard.float(forKey: playRateKey)
+                strongSelf.vlcPlayer.rate = rate > 1 ? rate : 1
                 strongSelf.playItem(atIndex: strongSelf.index)
                 
             }
         }
-        
-        vlcPlayer.drawable = videoView
-        vlcPlayer.delegate = self
-        let rate = UserDefaults.standard.float(forKey: playRateKey)
-        vlcPlayer.rate = rate > 1 ? rate : 1
+       
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -213,16 +218,19 @@ class CustomVLCPlayerController: BaseViewController {
     // MARK: 显示工具条
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(autoHideBar), object: nil)
+        
+        view.bringSubviewToFront(topBar)
+        topBar.isHidden = false
+        view.bringSubviewToFront(bottomBar)
+        bottomBar.isHidden = false
+        
         topBar.snp.updateConstraints { (make) in
             make.top.equalTo(-barHeight)
         }
         bottomBar.snp.updateConstraints { (make) in
             make.bottom.equalTo(barHeight)
         }
-        view.bringSubviewToFront(topBar)
-        topBar.isHidden = false
-        view.bringSubviewToFront(bottomBar)
-        bottomBar.isHidden = false
+        view.layoutIfNeeded()
         
         UIView.animate(withDuration: showAnimationDuration, animations: {
             self.topBar.snp.updateConstraints { (make) in
@@ -231,6 +239,7 @@ class CustomVLCPlayerController: BaseViewController {
             self.bottomBar.snp.updateConstraints { (make) in
                 make.bottom.equalTo(0)
             }
+            self.view.layoutIfNeeded()
         }) { (_) in
             self.perform(#selector(self.autoHideBar), with: nil, afterDelay: 5.0)
         }
@@ -259,7 +268,7 @@ class CustomVLCPlayerController: BaseViewController {
         }
 
         let deltaX = gesture.translation(in: view).x
-        let ratio = CGFloat(mediaTime.intValue/1000)/SCREEN_WIDTH*deltaX/60.0
+        let ratio = CGFloat(mediaTime.intValue/1000)/SCREEN_WIDTH*deltaX/10.0
     
 //        print("deltax = \(deltaX), length = \(CGFloat(player.media.length.intValue/1000)), ratio = \(ratio)")
         if Int32(abs(ratio)) < 1 {
@@ -297,13 +306,22 @@ class CustomVLCPlayerController: BaseViewController {
 
 extension CustomVLCPlayerController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ aNotification: Notification!) {
-        if let player = aNotification.object as? VLCMediaPlayer, player.state == .ended {
-            print("ended time = \(String(describing: player.time.stringValue))")
+        guard let player = aNotification.object as? VLCMediaPlayer else { return }
+        if player.state == .ended {
+//            print("---ended---")
             progress = 1
             bottomBar.update(currentTime: mediaTime.stringValue, totalTime: mediaTime.stringValue, sliderValue: progress)
             player.stop()
             bottomBar.changePlayButtonState(false)
 //            bottomBar.update(currentTime: "00:00", totalTime: mediaTime.stringValue, sliderValue: progress)
+            playItem(atIndex: index + 1)
+        } else if player.state == .playing {
+//            print("---playing---")
+        } else if player.state == .buffering {
+//            print("---buffering---")
+            bottomBar.changePlayButtonState(true)
+        } else if player.state == .opening {
+//            print("---opening---")
         }
     }
     
@@ -315,6 +333,7 @@ extension CustomVLCPlayerController: VLCMediaPlayerDelegate {
         guard let player = aNotification.object as? VLCMediaPlayer else {
             return
         }
+        
         progress = mediaTime.intValue > 0 ? Double(player.time.intValue)/Double(mediaTime.intValue) : 0
         bottomBar.update(currentTime: player.time.stringValue, totalTime: mediaTime.stringValue, sliderValue: progress)
     }
@@ -325,8 +344,7 @@ extension CustomVLCPlayerController: VLCMediaPlayerDelegate {
         }
         
         if property.elementsEqual("time") {
-//            print("time = \(String(describing: vlctime.stringValue))")
-//            bottomBar.update(currentTime: vlctime.stringValue, totalTime: mediaTime.stringValue, sliderValue: mediaTime.intValue > 0 ? Double(vlctime.intValue)/Double(mediaTime.intValue) : 0)
+
         } else if property.elementsEqual("remainingTime") {
             
         }

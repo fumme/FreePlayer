@@ -8,7 +8,7 @@
 
 import UIKit
 
-let showAnimationDuration: TimeInterval = 1
+let showAnimationDuration: TimeInterval = 0.5
 
 class VLCPlayListViewController: BaseViewController {
 
@@ -27,7 +27,7 @@ class VLCPlayListViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tailingConstraint.constant = -200
+        tailingConstraint.constant = 200
         bgImg.alpha = 0
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -37,7 +37,7 @@ class VLCPlayListViewController: BaseViewController {
             strongSelf.data = files.map({ (file) -> String in
                 return file.displayName
             })
-            strongSelf.tableView.reloadData()
+            strongSelf.scrollToSelectedItem()
         }
     }
     
@@ -51,27 +51,33 @@ class VLCPlayListViewController: BaseViewController {
             make.edges.equalToSuperview()
         }
         self.bgImg.alpha = 0.65
-
+        tailingConstraint.constant = 200
+        view.layoutIfNeeded()
+        
         UIView.animate(withDuration: showAnimationDuration, animations: {
             self.tailingConstraint.constant = 0
-            self.view.setNeedsDisplay()
+            self.view.layoutIfNeeded()
         }) { (_) in
+            self.scrollToSelectedItem()
+        }
+    }
+    
+    private func scrollToSelectedItem() {
+        guard let item = self.currentItem else {
+            return
+        }
+        if let idx = self.data.index(of: item) {
             self.tableView.reloadData()
-            guard let item = self.currentItem else {
-                return
-            }
-            if let idx = self.data.index(of: item) {
-                self.tableView.scrollToRow(at: IndexPath(row: idx, section: 0), at: .top, animated: true)
-            }
+            self.tableView.scrollToRow(at: IndexPath(row: idx, section: 0), at: .top, animated: true)
         }
     }
     
     
     func dismiss() {
+        view.layoutIfNeeded()
         UIView.animate(withDuration: showAnimationDuration, animations: {
-            self.tailingConstraint.constant = -200
-            
-            self.view.setNeedsDisplay()
+            self.tailingConstraint.constant = 200
+            self.view.layoutIfNeeded()
         }) { (_) in
             self.bgImg.alpha = 0
             self.view.removeFromSuperview()
@@ -98,6 +104,7 @@ extension VLCPlayListViewController: UITableViewDataSource, UITableViewDelegate 
         cell.textLabel?.text = data[indexPath.row]
         cell.contentView.backgroundColor = .black
         cell.textLabel?.font = UIFont.systemFont(ofSize: 12)
+        cell.selectionStyle = .none
         if data[indexPath.row].elementsEqual(currentItem ?? "") {
             cell.textLabel?.textColor = .red
         } else {
