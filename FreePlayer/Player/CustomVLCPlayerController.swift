@@ -31,9 +31,17 @@ class CustomVLCPlayerController: BaseViewController {
         return ges
     }()
     
-    fileprivate let barHeight = 44.0
+    private let barHeight = 44.0
     
     private var progress = 0.0
+    
+    private var isAnimating = false
+    
+    private var isShowBar = false
+    
+    private let timeInterval: TimeInterval = 5
+    
+    private lazy var timer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(autoHideBar), userInfo: nil, repeats: true)
     
     private lazy var topBar: VLCTopBar = {
         let bar = VLCTopBar()
@@ -112,6 +120,11 @@ class CustomVLCPlayerController: BaseViewController {
             guard let strongSelf = self else { return }
             strongSelf.playItem(atIndex: strongSelf.index + 1)
         }
+        
+        bar.dragingStateChanged = {[weak self] ret in
+            guard let strongSelf = self else { return }
+            strongSelf.timer.fireDate = ret ? Date.distantFuture : Date(timeIntervalSinceNow: strongSelf.timeInterval)
+        }
         return bar
     }()
     
@@ -173,7 +186,7 @@ class CustomVLCPlayerController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        view.addGestureRecognizer(gesture)
+        videoView.addGestureRecognizer(gesture)
         view.addSubview(videoView)
         videoView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -192,6 +205,7 @@ class CustomVLCPlayerController: BaseViewController {
         }
         
         addObserver()
+
     }
     
     private func playItem(atIndex idx: Int) {
@@ -214,34 +228,50 @@ class CustomVLCPlayerController: BaseViewController {
         vlcPlayer.addObserver(self, forKeyPath: "time", options: .new, context: nil)
         vlcPlayer.addObserver(self, forKeyPath: "remainingTime", options: .new, context: nil)
     }
+
     
     // MARK: 显示工具条
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(autoHideBar), object: nil)
+        
+        timer.fireDate = Date(timeIntervalSinceNow: self.timeInterval)
+        
+        if isAnimating || isShowBar { return }
         
         view.bringSubviewToFront(topBar)
         topBar.isHidden = false
         view.bringSubviewToFront(bottomBar)
         bottomBar.isHidden = false
-        
-        topBar.snp.updateConstraints { (make) in
+    
+        topBar.snp.remakeConstraints { (make) in
+            make.left.right.equalToSuperview()
             make.top.equalTo(-barHeight)
+            make.height.equalTo(barHeight)
         }
-        bottomBar.snp.updateConstraints { (make) in
+        
+        bottomBar.snp.remakeConstraints { (make) in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(barHeight)
             make.bottom.equalTo(barHeight)
         }
-        view.layoutIfNeeded()
-        
+        self.view.layoutIfNeeded()
         UIView.animate(withDuration: showAnimationDuration, animations: {
-            self.topBar.snp.updateConstraints { (make) in
+            self.isAnimating = true
+            self.topBar.snp.remakeConstraints { (make) in
+                make.left.right.equalToSuperview()
                 make.top.equalTo(0)
+                make.height.equalTo(self.barHeight)
             }
-            self.bottomBar.snp.updateConstraints { (make) in
+            
+            self.bottomBar.snp.remakeConstraints { (make) in
+                make.left.right.equalToSuperview()
+                make.height.equalTo(self.barHeight)
                 make.bottom.equalTo(0)
             }
             self.view.layoutIfNeeded()
         }) { (_) in
-            self.perform(#selector(self.autoHideBar), with: nil, afterDelay: 5.0)
+            self.isAnimating = false
+            self.isShowBar = true
+            self.timer.fireDate = Date(timeIntervalSinceNow: self.timeInterval)
         }
         
     }
@@ -249,7 +279,6 @@ class CustomVLCPlayerController: BaseViewController {
     // MARK: 隐藏工具条
     @objc private func autoHideBar() {
         if bottomBar.isInAction || pad.isInAction {
-            perform(#selector(autoHideBar), with: nil, afterDelay: 5.0)
             return
         }
         topBar.isHidden = true
@@ -258,6 +287,7 @@ class CustomVLCPlayerController: BaseViewController {
             pad.removeFromSuperview()
             topBar.setTitle(url?.lastPathComponent, buttonState: false)
         }
+        isShowBar = false
     }
     
     // MARK: 快进
@@ -270,7 +300,6 @@ class CustomVLCPlayerController: BaseViewController {
         let deltaX = gesture.translation(in: view).x
         let ratio = CGFloat(mediaTime.intValue/1000)/SCREEN_WIDTH*deltaX/10.0
     
-//        print("deltax = \(deltaX), length = \(CGFloat(player.media.length.intValue/1000)), ratio = \(ratio)")
         if Int32(abs(ratio)) < 1 {
             vlcPlayer.play()
             return
@@ -313,7 +342,6 @@ extension CustomVLCPlayerController: VLCMediaPlayerDelegate {
             bottomBar.update(currentTime: mediaTime.stringValue, totalTime: mediaTime.stringValue, sliderValue: progress)
             player.stop()
             bottomBar.changePlayButtonState(false)
-//            bottomBar.update(currentTime: "00:00", totalTime: mediaTime.stringValue, sliderValue: progress)
             playItem(atIndex: index + 1)
         } else if player.state == .playing {
 //            print("---playing---")
@@ -339,14 +367,13 @@ extension CustomVLCPlayerController: VLCMediaPlayerDelegate {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard let property = keyPath, let _ = change?[NSKeyValueChangeKey.newKey] as? VLCTime else {
-            return
-        }
+        guard let property = keyPath else { return }
         
         if property.elementsEqual("time") {
 
         } else if property.elementsEqual("remainingTime") {
             
         }
+        
     }
 }

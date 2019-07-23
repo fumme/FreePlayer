@@ -3,7 +3,7 @@
 //  Jimu2.0
 //
 //  Created by CXY on 2018/10/22.
-//  Copyright © 2018年 ubt. All rights reserved.
+//  Copyright © 2018年 cxy. All rights reserved.
 //
 
 import UIKit
@@ -145,14 +145,14 @@ class XYMediaPlayerView: UIView {
         let slider = XYVideoSlider()
         slider.bgColor = UIColor(hex: 0x2DA0FF)
         slider.progressColor = UIColor(hex: 0x2DA0FF)
-    slider.translatesAutoresizingMaskIntoConstraints = false
-        slider.draggingSliderClosure = { [weak self] sd  in
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.paning = { [weak self] sd  in
             self?.sliderChanging()
         }
-        slider.finishedClosure = { [weak self] sd  in
+        slider.endedPan = { [weak self] sd  in
             self?.sliderEndedChange()
         }
-        slider.valueChangedClosure = { [weak self] sd  in
+        slider.startPan = { [weak self] sd  in
             self?.sliderValueChanged()
         }
         return slider

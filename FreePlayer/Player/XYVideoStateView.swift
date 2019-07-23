@@ -3,7 +3,7 @@
 //  Jimu2.0
 //
 //  Created by CXY on 2018/10/30.
-//  Copyright © 2018年 ubt. All rights reserved.
+//  Copyright © 2018年 cxy. All rights reserved.
 //
 
 import UIKit

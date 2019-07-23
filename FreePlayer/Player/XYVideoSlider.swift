@@ -3,19 +3,37 @@
 //  Jimu2.0
 //
 //  Created by CXY on 2018/10/22.
-//  Copyright © 2018年 ubt. All rights reserved.
+//  Copyright © 2018年 cxy. All rights reserved.
 //
 
 import UIKit
 
+private class XYSlider: UISlider {
+    override func trackRect(forBounds bounds: CGRect) -> CGRect {
+        let rect = super.trackRect(forBounds: bounds)
+        let height: CGFloat = 10.0
+        return CGRect(x: rect.origin.x, y: (bounds.size.height-height)/2, width: rect.size.width, height: height)
+    }
+}
+
 
 class XYVideoSlider: UIView {
-    var value = 0.0 {
+    
+    var bgColor = UIColor.darkGray {
         didSet {
-            valueChangedClosure?(self)
-            panDistance = CGFloat((viewWidth-sliderDiameter)*value)
-            setProgress(value, layer: progressLayer, animated: false)
-            updateSlideFrame()
+            bgLayer.strokeColor = bgColor.cgColor
+        }
+    }
+    
+    var sliderColor = UIColor.clear {
+        didSet {
+            slider.backgroundColor = sliderColor
+        }
+    }
+    
+    var progressColor = UIColor.green {
+        didSet {
+            slider.minimumTrackTintColor = progressColor
         }
     }
     
@@ -25,55 +43,43 @@ class XYVideoSlider: UIView {
         }
     }
     
-    var finishedClosure: ((XYVideoSlider)->Void)?
-    var valueChangedClosure: ((XYVideoSlider)->Void)?
-    var draggingSliderClosure: ((XYVideoSlider)->Void)?
+    var value: Double {
+        set {
+            slider.value = Float(newValue)
+        }
+        get {
+            return Double(slider.value)
+        }
+    }
     
+    var startPan: ((XYVideoSlider)->Void)?
+    
+    var paning: ((XYVideoSlider)->Void)?
+    
+    var endedPan: ((XYVideoSlider)->Void)?
+
+    private let cacheColor = UIColor.lightGray
+
     // 游标直径
-    fileprivate let sliderDiameter = 15.0
+    private let sliderDiameter = 25.0
     
-    var bgColor = UIColor.darkGray {
-        didSet {
-            bgLayer.strokeColor = bgColor.cgColor
-            bgLayer.setNeedsDisplay()
-        }
-    }
+    private let lineWidth = 10.0
     
-    fileprivate let cacheColor = UIColor.lightGray
+    private var panDistance = CGFloat(0.0)
     
-    var progressColor = UIColor.green {
-        didSet {
-            progressLayer.strokeColor = progressColor.cgColor
-            progressLayer.setNeedsDisplay()
-//            slider.borderColor = progressColor.cgColor
-//            slider.setNeedsDisplay()
-        }
-    }
-    
-    var sliderColor = UIColor.lightGray {
-        didSet {
-            slider.strokeColor = sliderColor.cgColor
-            slider.setNeedsDisplay()
-        }
-    }
-    
-    fileprivate let lineWidth = 10.0
-    
-    fileprivate var panDistance = CGFloat(0.0)
-    
-    fileprivate var centerY: Double {
+    private var centerY: Double {
         return Double(bounds.size.height/2.0)
     }
     
-    fileprivate var viewWidth: Double {
+    private var viewWidth: Double {
         return Double(bounds.size.width)
     }
     
-    fileprivate var viewHeight: Double {
+    private var viewHeight: Double {
         return Double(bounds.size.height)
     }
     
-    fileprivate lazy var bgLayer: CAShapeLayer = {
+    private lazy var bgLayer: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.lineCap = CAShapeLayerLineCap.round
         layer.strokeColor = bgColor.cgColor
@@ -83,7 +89,7 @@ class XYVideoSlider: UIView {
         return layer
     }()
     
-    fileprivate lazy var cacheLayer: CAShapeLayer = {
+    private lazy var cacheLayer: CAShapeLayer = {
         let layer = CAShapeLayer()
         layer.lineCap = CAShapeLayerLineCap.round
         layer.strokeColor = cacheColor.cgColor
@@ -93,37 +99,28 @@ class XYVideoSlider: UIView {
         return layer
     }()
     
-    fileprivate lazy var progressLayer: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        layer.lineCap = CAShapeLayerLineCap.round
-        layer.strokeColor = progressColor.cgColor
-        layer.opacity = 1
-        layer.lineWidth = CGFloat(lineWidth)
-        layer.strokeEnd = 0
-        return layer
-    }()
-    
-    fileprivate lazy var slider: CAShapeLayer = {
-        let layer = CAShapeLayer()
-        layer.cornerRadius = CGFloat(sliderDiameter/2)
-        layer.borderColor = sliderColor.cgColor
-        layer.borderWidth = 7.0
-        layer.backgroundColor = UIColor.white.cgColor
-        return layer
+    private lazy var slider: XYSlider = {
+        let slider = XYSlider()
+        slider.setThumbImage(#imageLiteral(resourceName: "slider_sound"), for: .normal)
+        slider.backgroundColor = .clear
+        slider.maximumTrackTintColor = .clear
+        slider.addTarget(self, action: #selector(touchDown(_:)), for: .touchDown)
+        slider.addTarget(self, action: #selector(dragging(_:)), for: .valueChanged)
+        slider.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+        return slider
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        addGestureRecognizer(pan)
-        addGestureRecognizer(tap)
-        tap.require(toFail: pan)
-        
         layer.addSublayer(bgLayer)
         layer.addSublayer(cacheLayer)
-        layer.addSublayer(progressLayer)
-        layer.addSublayer(slider)
+        
+        addSubview(slider)
+        slider.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalTo(sliderDiameter)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -131,36 +128,19 @@ class XYVideoSlider: UIView {
     }
     
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateLayers()
+    @objc private func touchDown(_ slider: UISlider) {
+        startPan?(self)
     }
     
-    @objc fileprivate func handlePan(_ ges: UIPanGestureRecognizer) {
-        let deltaX = ges.translation(in: self).x
-        panDistance += deltaX
-        panDistance = max(0, panDistance)
-        panDistance = min(panDistance, CGFloat(viewWidth-sliderDiameter))
-        ges.setTranslation(.zero, in: self)
-        value = Double(panDistance)/(viewWidth-sliderDiameter)
-        if ges.state == .ended {
-            finishedClosure?(self)
-        } else if ges.state == .changed || ges.state == .began {
-            draggingSliderClosure?(self)
-        }
+    @objc private func dragging(_ slider: UISlider) {
+        paning?(self)
     }
     
-    @objc fileprivate func handleTap(_ ges: UITapGestureRecognizer) {
-        let loc = ges.location(in: self)
-        panDistance = loc.x
-        panDistance = max(0, panDistance)
-        panDistance = min(panDistance, CGFloat(viewWidth-sliderDiameter))
-        value = Double(panDistance)/(viewWidth-sliderDiameter)
-        finishedClosure?(self)
+    @objc private func touchUpInside(_ slider: UISlider) {
+        endedPan?(self)
     }
-    
-    
-    fileprivate func setProgress(_ precent: Double, layer: CAShapeLayer, animated: Bool = false) {
+
+    private func setProgress(_ precent: Double, layer: CAShapeLayer, animated: Bool = false) {
         if precent < 0 || precent > 1 {
             return
         }
@@ -176,14 +156,12 @@ class XYVideoSlider: UIView {
         }
     }
     
-    fileprivate func updateSlideFrame() {
-        let vue = ceil((viewWidth-sliderDiameter)*value)
-        UIView.animate(withDuration: 0.1) {
-            self.slider.frame = CGRect(x: vue, y: (self.viewHeight-self.sliderDiameter)/2, width: self.sliderDiameter, height: self.sliderDiameter)
-        }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateLayers()
     }
     
-    fileprivate func updateLayers() {
+    private func updateLayers() {
         if let supView = superview, supView.isHidden {
             return
         }
@@ -202,15 +180,7 @@ class XYVideoSlider: UIView {
         cacheLayerPath.move(to: CGPoint(x: orginX, y: centY))
         cacheLayerPath.addLine(to: CGPoint(x: desX, y: centY))
         cacheLayer.path = cacheLayerPath
-        
-        progressLayer.frame = bounds
-        let progressLayerPath = CGMutablePath()
-        progressLayerPath.move(to: CGPoint(x: orginX, y: centY))
-        progressLayerPath.addLine(to: CGPoint(x: desX, y: centY))
-        progressLayer.path = progressLayerPath
-        
-        let vue = ceil((viewWidth-sliderDiameter)*value)
-        slider.frame = CGRect(x: vue, y: (viewHeight-sliderDiameter)/2, width: sliderDiameter, height: sliderDiameter)
+
     }
 
 }

@@ -64,7 +64,6 @@ class VLCControlPad: UIView {
         rateTitleLabel.text = "播放速度\(String(format: "%.1f", slider.value))x"
         selectedRate = slider.value
         sliderValueChanged?(slider.value)
-        inDraging = true
     }
     
     @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {

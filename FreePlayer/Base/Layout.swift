@@ -2,8 +2,8 @@
 //  Layout.swift
 //  Jimu2.0
 //
-//  Created by 郭峰 on 2018/6/14.
-//  Copyright © 2018年 ubt. All rights reserved.
+//  Created by cxy on 2018/6/14.
+//  Copyright © 2018年 cxy. All rights reserved.
 //
 
 import UIKit

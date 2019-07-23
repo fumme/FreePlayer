@@ -21,6 +21,7 @@ class VLCBottomBar: UIView {
     var playNextAction: (()->Void)?
     var slidingBeganAction: (()->Void)?
     var slidingEndedAction: ((Float)->Void)?
+    var dragingStateChanged: ((Bool) -> Void)?
     
     private var inDraging = false
     
@@ -93,14 +94,14 @@ class VLCBottomBar: UIView {
         slider.bgColor = .white
         slider.progressColor = .yellow
         slider.translatesAutoresizingMaskIntoConstraints = false
-        slider.draggingSliderClosure = { [weak self] sd  in
+        slider.paning = { [weak self] sd  in
             self?.sliderChanging()
         }
-        slider.finishedClosure = { [weak self] sd  in
+        slider.endedPan = { [weak self] sd  in
             self?.sliderEndedChange()
         }
-        slider.valueChangedClosure = { [weak self] sd  in
-            self?.sliderValueChanged()
+        slider.startPan = { [weak self] sd  in
+            self?.sliderBeganChanged()
         }
         return slider
     }()
@@ -198,15 +199,18 @@ class VLCBottomBar: UIView {
     // MARK: slider事件
     private func sliderChanging() {
         inDraging = true
-        slidingBeganAction?()
+        dragingStateChanged?(inDraging)
     }
     
-    private func sliderValueChanged() {
-        inDraging = false
+    private func sliderBeganChanged() {
+        inDraging = true
+        dragingStateChanged?(inDraging)
+        slidingBeganAction?()
     }
     
     private func sliderEndedChange() {
         inDraging = false
+        dragingStateChanged?(inDraging)
         slidingEndedAction?(Float(slider.value))
     }
     
