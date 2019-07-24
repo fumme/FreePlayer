@@ -35,6 +35,8 @@ class VLCControlPad: UIView {
         addSubview(rateTitleLabel)
         addSubview(resetBtn)
         backgroundColor = .darkGray
+        layer.cornerRadius = 8
+        layer.masksToBounds = true
         alpha = 0.9
         rateTitleLabel.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview()
