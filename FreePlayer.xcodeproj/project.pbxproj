@@ -21,6 +21,7 @@
 		8044B5492226291300E30D7C /* VLCTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044B5482226291300E30D7C /* VLCTopBar.swift */; };
 		8044B54E2226812C00E30D7C /* VLCControlPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044B54D2226812C00E30D7C /* VLCControlPad.swift */; };
 		8044B5502226B49B00E30D7C /* XYPasteLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044B54F2226B49B00E30D7C /* XYPasteLabel.swift */; };
+		8059FA1D22E7FBED00BB1896 /* WeakTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8059FA1C22E7FBEC00BB1896 /* WeakTimer.swift */; };
 		805D92A4221C1F1D00E45959 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805D92A3221C1F1D00E45959 /* AppDelegate.swift */; };
 		805D92A9221C1F1D00E45959 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 805D92A7221C1F1D00E45959 /* Main.storyboard */; };
 		805D92AB221C1F1E00E45959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 805D92AA221C1F1E00E45959 /* Assets.xcassets */; };
@@ -99,6 +100,7 @@
 		8044B5482226291300E30D7C /* VLCTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCTopBar.swift; sourceTree = "<group>"; };
 		8044B54D2226812C00E30D7C /* VLCControlPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCControlPad.swift; sourceTree = "<group>"; };
 		8044B54F2226B49B00E30D7C /* XYPasteLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XYPasteLabel.swift; sourceTree = "<group>"; };
+		8059FA1C22E7FBEC00BB1896 /* WeakTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakTimer.swift; sourceTree = "<group>"; };
 		805D92A0221C1F1D00E45959 /* FreePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		805D92A3221C1F1D00E45959 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		805D92A8221C1F1D00E45959 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 		807DEA3F2223D8D800867B54 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				8059FA1C22E7FBEC00BB1896 /* WeakTimer.swift */,
 				807DEA612223E8B900867B54 /* ToastView.swift */,
 				807DEA5B2223DB1200867B54 /* Layout.swift */,
 				807DEA402223D8D800867B54 /* BaseNavigationController.swift */,
@@ -583,6 +586,7 @@
 				807DEA1B221FE3D500867B54 /* MCAVPlayerItemLocalCacheTask.m in Sources */,
 				807DEA5A2223DAF900867B54 /* XYVideoStateView.swift in Sources */,
 				807DE9E3221F96A900867B54 /* XYWebServer.swift in Sources */,
+				8059FA1D22E7FBED00BB1896 /* WeakTimer.swift in Sources */,
 				807DEA602223DE2500867B54 /* CustomAVPlayerController.swift in Sources */,
 				800FA45F222912D70075D42D /* XYFileCollectionCell.swift in Sources */,
 				807DEA492223D8D800867B54 /* XYUtils.swift in Sources */,

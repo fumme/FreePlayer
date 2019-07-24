@@ -41,7 +41,8 @@ class CustomVLCPlayerController: BaseViewController {
     
     private let timeInterval: TimeInterval = 5
     
-    private lazy var timer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(autoHideBar), userInfo: nil, repeats: true)
+    
+    private lazy var timer = WeakTimer.scheduledWeakTimer(timeInterval: timeInterval, target: self, selector: #selector(autoHideBar), userInfo: nil, repeats: true)
     
     private lazy var topBar: VLCTopBar = {
         let bar = VLCTopBar()
@@ -92,10 +93,11 @@ class CustomVLCPlayerController: BaseViewController {
         let bar = VLCBottomBar()
         bar.isHidden = true
         bar.playOrPauseAction = {[weak self] onOff in
+            guard let strongSelf = self else { return }
             if onOff {
-                self?.vlcPlayer.play()
+                strongSelf.vlcPlayer.play()
             } else {
-                self?.vlcPlayer.pause()
+                strongSelf.vlcPlayer.pause()
             }
         }
         bar.slidingBeganAction = {[weak self] in
@@ -138,7 +140,8 @@ class CustomVLCPlayerController: BaseViewController {
     private lazy var pad: VLCControlPad = {
         let pad = VLCControlPad()
         pad.sliderValueChanged = { [weak self] value in
-            self?.vlcPlayer.rate = value
+            guard let strongSelf = self else { return }
+            strongSelf.vlcPlayer.rate = value
         }
         return pad
     }()
@@ -329,6 +332,7 @@ class CustomVLCPlayerController: BaseViewController {
         if vlcPlayer.isPlaying {
             vlcPlayer.stop()
         }
+        print("\(self.classForCoder) deinit")
     }
 }
 
